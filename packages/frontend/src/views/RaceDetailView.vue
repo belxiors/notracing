@@ -36,48 +36,47 @@ interface Race {
   name: string
   date: string
   location: string
-  logo: string
+  image: string
+  description: string
+  price: string
 }
 
-// Mock data - in a real application, this would be fetched from an API
-const races: Race[] = [
-  {
-    id: 1,
-    name: 'Marathon du Mont-Blanc',
-    date: '2024-06-30',
-    location: 'Chamonix, France',
-    logo: 'https://via.placeholder.com/150',
-  },
-  {
-    id: 2,
-    name: 'Hardrock 100',
-    date: '2024-07-12',
-    location: 'Silverton, Colorado',
-    logo: 'https://via.placeholder.com/150',
-  },
-  {
-    id: 3,
-    name: 'UTMB',
-    date: '2024-08-26',
-    location: 'Chamonix, France',
-    logo: 'https://via.placeholder.com/150',
-  },
-]
-
-const participants = ref([
-  { id: 1, name: 'John Doe', dateAdded: '2024-07-20', reason: 'Injury' },
-  { id: 2, name: 'Jane Smith', dateAdded: '2024-07-21', reason: 'Work conflict' },
-  { id: 3, name: 'Peter Jones', dateAdded: '2024-07-22', reason: 'Personal reasons' },
-])
+interface Participant {
+  id: number
+  name: string
+  dateAdded: string
+  reason: string
+}
 
 const route = useRoute()
 const router = useRouter()
 const race = ref<Race | null>(null)
+const participants = ref<Participant[]>([])
 
-onMounted(() => {
-  const raceId = parseInt(route.params.id as string)
-  race.value = races.find((r) => r.id === raceId) || null
-})
+const fetchRaceDetails = async () => {
+  const raceId = route.params.id
+  try {
+    const [raceResponse, participantsResponse] = await Promise.all([
+      fetch(`http://localhost:3000/api/races/${raceId}`, {
+        headers: { 'X-API-KEY': 'super-secret-key' },
+      }),
+      fetch(`http://localhost:3000/api/races/${raceId}/participants`, {
+        headers: { 'X-API-KEY': 'super-secret-key' },
+      }),
+    ])
+
+    if (!raceResponse.ok || !participantsResponse.ok) {
+      throw new Error('Failed to fetch race details')
+    }
+
+    race.value = await raceResponse.json()
+    participants.value = await participantsResponse.json()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(fetchRaceDetails)
 
 const requestEntry = (participantId: number) => {
   router.push({ name: 'request-entry', params: { raceId: race.value?.id, participantId } })

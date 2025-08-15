@@ -8,6 +8,9 @@ import VerifyIdentityView from '../views/VerifyIdentityView.vue'
 import RaceDetailView from '../views/RaceDetailView.vue'
 import RequestEntryView from '../views/RequestEntryView.vue'
 import RequestSuccessView from '../views/RequestSuccessView.vue'
+import CheckEmailView from '../views/CheckEmailView.vue'
+import EmailVerifiedView from '../views/EmailVerifiedView.vue'
+import UserPageView from '../views/UserPageView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,7 +60,35 @@ const router = createRouter({
       name: 'request-success',
       component: RequestSuccessView,
     },
+    {
+      path: '/check-email',
+      name: 'check-email',
+      component: CheckEmailView,
+    },
+    {
+      path: '/verify/:token',
+      name: 'verify-email',
+      component: EmailVerifiedView,
+    },
+    {
+      path: '/user',
+      name: 'user-page',
+      component: UserPageView,
+      meta: { requiresAuth: true },
+    },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!sessionStorage.getItem('authToken')) {
+      next({ name: 'login' })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

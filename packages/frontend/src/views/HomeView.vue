@@ -21,45 +21,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import RaceCard from '@/components/RaceCard.vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 
-const email = ref('')
+interface Race {
+  id: number
+  name: string
+  location: string
+  date: string
+  price: string
+  image: string
+  description: string
+}
 
-const races = ref([
-  {
-    id: 1,
-    name: 'City Marathon',
-    date: '2025-10-15',
-    location: 'Metropolis',
-    price: '€50',
-    image: 'https://i.imgur.com/3aG1YfM.png',
-    description:
-      'The annual city marathon is back! Join us for a scenic run through the heart of Metropolis.',
-  },
-  {
-    id: 2,
-    name: 'Coastal Half Marathon',
-    date: '2025-11-02',
-    location: 'Sunny Bay',
-    price: '€35',
-    image: 'https://i.imgur.com/3aG1YfM.png',
-    description:
-      'Enjoy breathtaking ocean views as you run along the beautiful coastline of Sunny Bay.',
-  },
-  {
-    id: 3,
-    name: 'Mountain Trail Run',
-    date: '2025-09-20',
-    location: 'Green Valley',
-    price: '€45',
-    image: 'https://i.imgur.com/3aG1YfM.png',
-    description:
-      'Challenge yourself with this demanding trail run through the stunning Green Valley mountains.',
-  },
-])
+const email = ref('')
+const races = ref<Race[]>([])
+
+const fetchRaces = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/races', {
+      headers: {
+        'X-API-KEY': 'super-secret-key',
+      },
+    })
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    races.value = await response.json()
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error)
+  }
+}
+
+onMounted(() => {
+  fetchRaces()
+})
 
 const subscribe = () => {
   if (email.value) {
