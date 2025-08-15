@@ -53,7 +53,7 @@ onMounted(async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:3000/api/user', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user`, {
       headers: {
         'X-AUTH-TOKEN': token,
       },
@@ -64,7 +64,7 @@ onMounted(async () => {
       const data = await response.json()
       message.value = data.error || 'Failed to fetch user data.'
     }
-  } catch (error) {
+  } catch {
     message.value = 'Failed to connect to the server.'
   }
 })

@@ -45,7 +45,7 @@ const validateEmail = () => {
 const sendVerificationLink = async () => {
   if (validateEmail()) {
     try {
-      const response = await fetch('http://localhost:3000/api/verify-email', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/verify-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const sendVerificationLink = async () => {
         const data = await response.json()
         emailError.value = data.error || 'An unknown error occurred.'
       }
-    } catch (error) {
+    } catch {
       emailError.value = 'Failed to connect to the server.'
     }
   }

@@ -40,7 +40,7 @@ onMounted(async () => {
   }
 
   try {
-    const response = await fetch(`http://localhost:3000/api/validate-token/${token}`)
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/validate-token/${token}`)
     const data = await response.json()
     if (response.ok) {
       success.value = true
@@ -56,7 +56,7 @@ onMounted(async () => {
       success.value = false
       message.value = data.error || 'An unknown error occurred.'
     }
-  } catch (error) {
+  } catch {
     success.value = false
     message.value = 'Failed to connect to the server.'
   } finally {

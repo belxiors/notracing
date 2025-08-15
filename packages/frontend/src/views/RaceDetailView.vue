@@ -57,10 +57,10 @@ const fetchRaceDetails = async () => {
   const raceId = route.params.id
   try {
     const [raceResponse, participantsResponse] = await Promise.all([
-      fetch(`http://localhost:3000/api/races/${raceId}`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/races/${raceId}`, {
         headers: { 'X-API-KEY': 'super-secret-key' },
       }),
-      fetch(`http://localhost:3000/api/races/${raceId}/participants`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/races/${raceId}/participants`, {
         headers: { 'X-API-KEY': 'super-secret-key' },
       }),
     ])
